@@ -18,13 +18,13 @@ class Scoreboard():
                 self.player2Score+=1
                 return
             self.player1Score+=1
-            return
+            return self.player1
         if c2 == "P":
             if c1 == "T":
                 self.player1Score+=1
                 return
             self.player2Score+=1
-            return
+            return self.player2
 
     def printRound(self,counter,c1,c2):
         print("Ronda: "+str(counter))
