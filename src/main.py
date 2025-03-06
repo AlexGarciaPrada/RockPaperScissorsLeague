@@ -11,18 +11,25 @@ from battleFileExcel import BattleFileExcel
 
 
 
-demo = Rockie()
-demo2 = Paperly()
+player1 = Rockie()
+player2 = Paperly()
+player1name= type(player1).__name__
+player2name= type(player2).__name__
+excel = BattleFileExcel(FILENAME, player1name, player2name)
 
-excel = BattleFileExcel(FILENAME,type(demo).__name__,type(demo2).__name__)
+scoreboard = Scoreboard(player1name, player2name)
+excel.createExcelHistory()
+excel.createScoreboardTable()
 
-scoreboard = Scoreboard(type(demo).__name__,type(demo2).__name__)
+for round in range(1,ROUNDS+1):
+    print(round)
+    firstPlayerMove= player1.play(round, FILENAME)
+    secoundPlayerMove= player2.play(round,FILENAME)
+    winner= scoreboard.updateScoreboard(firstPlayerMove,secoundPlayerMove)
+    excel.updateScoreboardTable(scoreboard.player1Score,scoreboard.player1Score)
+    excel.updateExcelHistory(round,firstPlayerMove,secoundPlayerMove,winner)
+excel.saveExcel()
 
-for i in range(1,ROUNDS+1):
-    scoreboard.printRound(i,demo.play(i,FILENAME),demo2.play(i,FILENAME))
-    scoreboard.updateScoreboard(demo.play(i,FILENAME),demo2.play(i,FILENAME))
-    excel.writeRound(demo.play(i,FILENAME),demo2.play(i,FILENAME),scoreboard.updateScoreboard(demo.play(i,FILENAME),demo2.play(i,FILENAME)))
 
-excel.makeExcel()
 
 
