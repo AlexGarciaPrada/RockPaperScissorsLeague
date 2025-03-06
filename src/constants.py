@@ -1,2 +1,2 @@
 ROUNDS = 500
-FILENAME = ""
+FILENAME = "battlefile.csv"

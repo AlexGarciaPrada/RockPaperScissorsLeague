@@ -5,9 +5,12 @@ from SampleBots.paperly import Paperly
 from constants import *
 from scoreboard import *
 
+from battleFile import BattleFile
 
 demo = Rockie()
 demo2 = Paperly()
+prueba = BattleFile(FILENAME)
+prueba.startFile(type(demo).__name__,type(demo2).__name__)
 
 scoreboard = Scoreboard(type(demo).__name__,type(demo2).__name__)
 
