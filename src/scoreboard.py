@@ -25,6 +25,11 @@ class Scoreboard():
                 return
             self.player2Score+=1
             return
+    def printRound(self,counter,c1,c2):
+        print("Ronda: "+str(counter))
+        print(self.player1 + ": " + c1)
+        print(self.player2 + ": " + c2)
+        print("-----------------------")
 
     def printResults(self):
         print(self.player1 + ": " + str(self.player1Score))
