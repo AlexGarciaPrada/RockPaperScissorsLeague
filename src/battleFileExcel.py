@@ -1,6 +1,8 @@
 import signal
 
+import openpyxl
 import pandas as pd
+from openpyxl.chart import BarChart, Reference
 from openpyxl.reader.excel import load_workbook
 from openpyxl.styles import PatternFill, Border, Side
 from openpyxl.workbook import Workbook
@@ -24,9 +26,19 @@ class BattleFileExcel():
             self.file = Workbook()
             self.file.save(FILENAME)
             self.file.create_sheet(title='Resultados')
+            self.file.create_sheet(title='Estadisticas')
 
         self.datos = dict()
-        self. scoreboard=dict()
+        self.player1data=dict()
+        self.player2data = dict()
+
+        self.player1data['R']=0
+        self.player1data['P'] = 0
+        self.player1data['T'] = 0
+
+        self.player2data['R'] = 0
+        self.player2data['P'] = 0
+        self.player2data['T'] = 0
 
         self.player1=player1
         self.FILENAME=FILENAME
@@ -36,8 +48,6 @@ class BattleFileExcel():
         self.datos[player2]=[]
         self.datos['Ganador']=[]
 
-        self.scoreboard[player1] = [0]
-        self.scoreboard[player2] = [0]
 
         signal.signal(signal.SIGINT, self.handleExit)  # Captura Ctrl+C
         signal.signal(signal.SIGTERM, self.handleExit)  # Captura kill PID
@@ -46,6 +56,10 @@ class BattleFileExcel():
         self.datos[self.player1].append(c1)
         self.datos[self.player2].append(c2)
         self.datos['Ganador'].append(winner)
+
+        self.player1data[c1]+=1
+        self.player2data[c1] += 1
+
 
     def createExcelHistory(self):
         ws = self.file['Resultados']
@@ -88,6 +102,31 @@ class BattleFileExcel():
         self.file.save(FILENAME)
         self.file.close()
 
+    def makeGraphics(self):
+        ws = self.file['Estadisticas']
+
+        ws.append(["Move", "Valor"])
+        for move, value in self.player1data.items():
+            ws.append([move, value])
+
+        chart = BarChart()
+        data = Reference(ws, min_col=2, min_row=1, max_col=2,
+                         max_row=len(self.player1data) + 1)
+        categories = Reference(ws, min_col=1, min_row=2,
+                               max_row=len(self.player1data) + 1)
+
+        chart.y_axis.majorGridlines = None
+        chart.y_axis.majorTickMark = 'in'
+        chart.y_axis.minorTickMark = 'none'
+
+        chart.y_axis.min = 0  # Valor mínimo del eje Y
+        chart.y_axis.max = ROUNDS  # Valor máximo del eje Y
+        chart.y_axis.majorUnit = ROUNDS // 10  # La frecuencia de las marcas cada 100 unidades
+
+        chart.add_data(data, titles_from_data=True)
+        chart.set_categories(categories)
+
+        ws.add_chart(chart, "E5")
     def handleExit(self,signum,frame):
         self.saveExcel()
         exit(0)

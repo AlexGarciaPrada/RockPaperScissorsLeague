@@ -26,9 +26,10 @@ for round in range(1,ROUNDS+1):
     firstPlayerMove= player1.play(round, FILENAME)
     secoundPlayerMove= player2.play(round,FILENAME)
     winner= scoreboard.updateScoreboard(firstPlayerMove,secoundPlayerMove)
+    excel.writeRound(firstPlayerMove,secoundPlayerMove,winner)
     excel.updateScoreboardTable(scoreboard.get_player1Score(),scoreboard.get_player2Score())
     excel.updateExcelHistory(round,firstPlayerMove,secoundPlayerMove,winner)
-
+excel.makeGraphics()
 excel.saveExcel()
 
 
