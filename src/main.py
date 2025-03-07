@@ -29,7 +29,8 @@ for round in range(1,ROUNDS+1):
     excel.writeRound(firstPlayerMove,secoundPlayerMove,winner)
     excel.updateScoreboardTable(scoreboard.get_player1Score(),scoreboard.get_player2Score())
     excel.updateExcelHistory(round,firstPlayerMove,secoundPlayerMove,winner)
-excel.makeGraphics()
+excel.makeGraphicsPlayer1()
+excel.makeGraphicsPlayer2()
 excel.saveExcel()
 
 

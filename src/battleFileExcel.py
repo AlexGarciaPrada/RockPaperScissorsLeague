@@ -20,13 +20,18 @@ class BattleFileExcel():
 
     def __init__(self,FILENAME,player1,player2):
 
+        self.player1=player1
+        self.FILENAME=FILENAME
+        self.player2=player2
+
         try:
             self.file = load_workbook(FILENAME)
         except FileNotFoundError:
             self.file = Workbook()
             self.file.save(FILENAME)
             self.file.create_sheet(title='Resultados')
-            self.file.create_sheet(title='Estadisticas')
+            self.file.create_sheet(title='Estadisticas de '+ self.player1)
+            self.file.create_sheet(title='Estadisticas de ' + self.player2)
 
         self.datos = dict()
         self.player1data=dict()
@@ -40,9 +45,7 @@ class BattleFileExcel():
         self.player2data['P'] = 0
         self.player2data['T'] = 0
 
-        self.player1=player1
-        self.FILENAME=FILENAME
-        self.player2=player2
+
 
         self.datos[player1]=[]
         self.datos[player2]=[]
@@ -58,7 +61,7 @@ class BattleFileExcel():
         self.datos['Ganador'].append(winner)
 
         self.player1data[c1]+=1
-        self.player2data[c1] += 1
+        self.player2data[c2] += 1
 
 
     def createExcelHistory(self):
@@ -101,19 +104,18 @@ class BattleFileExcel():
     def saveExcel(self):
         self.file.save(FILENAME)
         self.file.close()
-
-    def makeGraphics(self):
-        ws = self.file['Estadisticas']
+    def makeGraphics(self,dictionary,name_sheet):
+        ws = self.file[name_sheet]
 
         ws.append(["Move", "Valor"])
-        for move, value in self.player1data.items():
+        for move, value in dictionary.items():
             ws.append([move, value])
 
         chart = BarChart()
         data = Reference(ws, min_col=2, min_row=1, max_col=2,
-                         max_row=len(self.player1data) + 1)
+                         max_row=len(dictionary) + 1)
         categories = Reference(ws, min_col=1, min_row=2,
-                               max_row=len(self.player1data) + 1)
+                               max_row=len(dictionary) + 1)
 
         chart.y_axis.majorGridlines = None
         chart.y_axis.majorTickMark = 'in'
@@ -127,6 +129,14 @@ class BattleFileExcel():
         chart.set_categories(categories)
 
         ws.add_chart(chart, "E5")
+
+    def makeGraphicsPlayer1(self):
+        self.makeGraphics(self.player1data,'Estadisticas de '+ self.player1)
+
+    def makeGraphicsPlayer2(self):
+        self.makeGraphics(self.player2data, 'Estadisticas de ' + self.player2)
+
+
     def handleExit(self,signum,frame):
         self.saveExcel()
         exit(0)
